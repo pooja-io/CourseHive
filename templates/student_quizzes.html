@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}My Quizzes | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>My Quizzes</h1>
+            <p>Attempt quizzes for your enrolled courses and view your scores.</p>
+        </div>
+    </div>
+
+    <!-- Available Quizzes -->
+    {% if quizzes %}
+
+        <div class="course-grid">
+
+            {% for quiz in quizzes %}
+
+                <div class="course-card">
+
+                    <!-- Course Name -->
+                    <span class="course-category">
+                        {{ quiz.course_name }}
+                    </span>
+
+                    <!-- Quiz Title -->
+                    <h3>{{ quiz.title }}</h3>
+
+                    <!-- Quiz Description -->
+                    <p>
+                        {{ quiz.description or "Test your knowledge in this course." }}
+                    </p>
+
+                    <!-- Quiz Details -->
+                    <div class="course-details">
+
+                        <p>
+                            <strong>Time Limit:</strong>
+                            {{ quiz.time_limit_minutes }} minutes
+                        </p>
+
+                        <p>
+                            <strong>Maximum Attempts:</strong>
+                            {{ quiz.max_attempts }}
+                        </p>
+
+                        <p>
+                            <strong>Questions:</strong>
+                            {{ quiz.question_count }}
+                        </p>
+
+                        {% if quiz.attempt_count > 0 %}
+
+                            <p>
+                                <strong>Attempts Used:</strong>
+                                {{ quiz.attempt_count }} / {{ quiz.max_attempts }}
+                            </p>
+
+                            <p>
+                                <strong>Best Score:</strong>
+                                {{ quiz.best_score }} / 10
+                            </p>
+
+                        {% else %}
+
+                            <p>You have not attempted this quiz yet.</p>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Quiz Action -->
+                    {% if quiz.question_count > 0 and quiz.attempt_count < quiz.max_attempts %}
+
+                        <a
+                            href="{{ url_for('attempt_quiz', quiz_id=quiz.quiz_id) }}"
+                            class="nav-button">
+                            Start Quiz →
+                        </a>
+
+                    {% elif quiz.question_count == 0 %}
+
+                        <p>This quiz is not ready yet.</p>
+
+                    {% else %}
+
+                        <p>You have used all available attempts.</p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- Empty State -->
+        <div class="empty-message">
+
+            <div class="empty-icon">📝</div>
+
+            <h3>No quizzes available</h3>
+
+            <p>
+                Quizzes will appear here when mentors publish them
+                for your enrolled courses.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

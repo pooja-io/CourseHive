@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}All Analytics | CourseHive{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>CourseHive Analytics</h1>
+            <p>View all platform analytics reports from one place.</p>
+        </div>
+    </div>
+
+    <section class="dashboard-section">
+        <h2>Available Analytics Reports</h2>
+
+        <div class="admin-action-buttons">
+
+            <a href="{{ url_for('admin_course_analytics') }}"
+               class="admin-blue-button">
+                Course Analytics
+            </a>
+
+            <a href="{{ url_for('admin_student_analytics') }}"
+               class="admin-blue-button">
+                Student Performance Analytics
+            </a>
+
+            <a href="{{ url_for('admin_completion_analytics') }}"
+               class="admin-blue-button">
+                Course Completion Analytics
+            </a>
+
+            <a href="{{ url_for('admin_study_time_analytics') }}"
+               class="admin-blue-button">
+                Study Time Analytics
+            </a>
+
+            <a href="{{ url_for('admin_visual_reports') }}"
+               class="admin-blue-button">
+                Visual Reports
+            </a>
+
+        </div>
+    </section>
+
+    <div class="admin-back-dashboard">
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-back-button">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,595 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.course_name }} | CourseHive{% endblock %}
+
+{% block content %}
+
+<style>
+/* Course detail page */
+.course-detail-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.course-info {
+    background: #ffffff;
+    padding: 28px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 22px rgba(35, 55, 100, 0.06);
+}
+
+.course-info h1 {
+    color: #1d2b4f;
+    margin-bottom: 12px;
+}
+
+.course-info p {
+    color: #68738a;
+    line-height: 1.7;
+}
+
+.course-progress-section {
+    margin-bottom: 30px;
+}
+
+.course-progress-section progress {
+    width: 100%;
+    height: 16px;
+    accent-color: #3157d5;
+}
+
+.study-time-card {
+    background: #f9faff;
+    padding: 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+/* Three lesson cards per row */
+.lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin: 24px 0 35px;
+    align-items: start;
+}
+
+/* Individual lesson card */
+.lesson-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(35, 55, 100, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lesson-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(49, 87, 213, 0.12);
+}
+
+/* Video thumbnail */
+.lesson-thumbnail {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #edf1f8;
+}
+
+.lesson-thumbnail iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* YouTube thumbnail */
+.lesson-thumbnail-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+.lesson-thumbnail-link img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.lesson-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 54px;
+    height: 38px;
+    border-radius: 10px;
+    background: #3157d5;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 23px;
+    transition: background 0.2s ease;
+}
+
+.lesson-thumbnail-link:hover .lesson-play-icon {
+    background: #2444b5;
+}
+
+/* Lesson name and details */
+.lesson-content {
+    padding: 17px;
+}
+
+.lesson-number {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #3157d5;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lesson-content h3 {
+    margin: 0 0 10px;
+    color: #1d2b4f;
+    font-size: 17px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.lesson-description {
+    color: #68738a;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.lesson-completed {
+    color: #087f68;
+    font-weight: 700;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.lesson-complete-form {
+    margin-top: 14px;
+}
+
+.lesson-complete-form button {
+    width: 100%;
+}
+
+/* General buttons on course detail page */
+.course-detail-page .auth-button,
+.course-detail-page .course-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 42px;
+    padding: 10px 15px;
+    border-radius: 9px;
+    font-family: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+/* Course Reviews & Ratings button */
+.course-detail-page .course-button {
+    background: #3157d5;
+    border: 1px solid #3157d5;
+    color: #ffffff !important;
+}
+
+/* Hover: white background and black text */
+.course-detail-page .course-button:hover {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #3157d5 !important;
+}
+
+/* Keep other action buttons consistent */
+.course-detail-page .auth-button {
+    background: #3157d5;
+    border: 1px solid #3157d5;
+    color: #ffffff !important;
+}
+
+.course-detail-page .auth-button:hover {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #3157d5 !important;
+}
+
+/* Back link */
+.course-detail-page .back-link {
+    display: inline-block;
+    margin: 20px 0;
+    color: #3157d5;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.course-detail-page .back-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 850px) {
+    .lessons-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .course-detail-page {
+        padding: 20px 12px;
+    }
+
+    .course-info {
+        padding: 20px;
+    }
+
+    .lessons-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+}
+</style>
+
+<div class="course-detail-page">
+
+    <!-- Course Details -->
+    <section class="course-info">
+        <h1>{{ course.course_name }}</h1>
+
+        <p>{{ course.description }}</p>
+
+        <p>
+            <strong>Category:</strong>
+            {{ course.category or "General" }}
+        </p>
+    </section>
+
+    <!-- Student Course Progress -->
+    {% if session.get("user_role") == "student" and is_enrolled|default(true) %}
+
+        <section class="course-progress-section">
+
+            <h2>Your Course Progress</h2>
+
+            <p>
+                Completed {{ completed_count }} of {{ total_lessons }} lessons
+            </p>
+
+            <p>
+                <strong>{{ course_progress }}% completed</strong>
+            </p>
+
+            <progress value="{{ course_progress }}" max="100"></progress>
+
+            <!-- Automatic Study-Time Tracking -->
+            <div class="study-time-card">
+                <h3>📚 Study Time</h3>
+
+                <p id="study-status" aria-live="polite">
+                    Study-time tracking will start automatically.
+                </p>
+            </div>
+
+            <!-- Course Reviews -->
+            <p>
+                <a
+                    href="{{ url_for('course_reviews', course_id=course.course_id) }}"
+                    class="course-button">
+                    ⭐ Course Reviews & Ratings
+                </a>
+            </p>
+
+        </section>
+
+    {% endif %}
+
+    <!-- Course Lessons -->
+    <h2>Course Lessons</h2>
+
+    {% if lessons %}
+
+        <div class="lessons-grid">
+
+            {% for lesson in lessons %}
+
+                <article class="lesson-card">
+
+                    <!-- Video thumbnail -->
+                    <div
+                        class="lesson-thumbnail"
+                        id="lesson-video-{{ lesson.lesson_id }}"
+                    >
+
+                        {% if lesson.embed_url %}
+
+                            {% set video_id = lesson.embed_url.split('/')[-1].split('?')[0] %}
+
+                            <a
+                                href="#"
+                                class="lesson-thumbnail-link"
+                                data-embed-url="{{ lesson.embed_url }}"
+                                data-lesson-title="{{ lesson.title }}"
+                                aria-label="Play {{ lesson.title }}"
+                            >
+                                <img
+                                    src="https://img.youtube.com/vi/{{ video_id }}/hqdefault.jpg"
+                                    alt="Thumbnail for {{ lesson.title }}"
+                                    loading="lazy"
+                                >
+
+                                <span class="lesson-play-icon">▶</span>
+                            </a>
+
+                        {% else %}
+
+                            <div style="padding: 20px;">
+                                Video unavailable
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Lesson title and description -->
+                    <div class="lesson-content">
+
+                        <span class="lesson-number">
+                            Lesson {{ lesson.lesson_order }}
+                        </span>
+
+                        <h3>{{ lesson.title }}</h3>
+
+                        {% if lesson.description %}
+                            <p class="lesson-description">
+                                {{ lesson.description }}
+                            </p>
+                        {% endif %}
+
+                        <!-- Mark Lesson as Completed -->
+                        {% if session.get("user_role") == "student" and is_enrolled|default(true) %}
+
+                            {% if lesson.completed %}
+
+                                <p class="lesson-completed">
+                                    ✓ Lesson Completed
+                                </p>
+
+                            {% else %}
+
+                                <form
+                                    class="lesson-complete-form"
+                                    method="POST"
+                                    action="{{ url_for('complete_lesson', lesson_id=lesson.lesson_id) }}"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="auth-button"
+                                    >
+                                        Mark as Completed
+                                    </button>
+                                </form>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="course-info">
+            <h3>No lessons available yet</h3>
+            <p>No lessons have been added to this course yet.</p>
+        </div>
+
+    {% endif %}
+
+    <!-- Enroll in Course -->
+    {% if session.get("user_role") == "student" and not is_enrolled|default(true) %}
+
+        <form
+            method="POST"
+            action="{{ url_for('enroll_course', course_id=course.course_id) }}"
+        >
+            <button type="submit" class="auth-button">
+                Enroll Now
+            </button>
+        </form>
+
+    {% endif %}
+
+    <!-- Navigation -->
+    {% if session.get("user_role") == "student" %}
+
+        <a href="{{ url_for('student_dashboard') }}" class="back-link">
+            ← Back to Dashboard
+        </a>
+
+    {% else %}
+
+        <a href="{{ url_for('home') }}" class="back-link">
+            ← Back to Home
+        </a>
+
+    {% endif %}
+
+</div>
+
+<!-- Open the selected lesson inside its thumbnail area -->
+<script>
+document.querySelectorAll(".lesson-thumbnail-link").forEach(function (link) {
+
+    link.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        const thumbnail = link.closest(".lesson-thumbnail");
+        const embedUrl = link.dataset.embedUrl;
+        const lessonTitle = link.dataset.lessonTitle;
+
+        if (!thumbnail || !embedUrl) {
+            return;
+        }
+
+        const iframe = document.createElement("iframe");
+
+        iframe.src = embedUrl;
+        iframe.title = lessonTitle;
+        iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.allowFullscreen = true;
+        iframe.loading = "lazy";
+
+        thumbnail.replaceChildren(iframe);
+    });
+
+});
+</script>
+
+<!-- Automatic Study-Time Tracking Script -->
+{% if session.get("user_role") == "student" and is_enrolled|default(true) %}
+
+<script>
+(function () {
+    const statusElement = document.getElementById("study-status");
+
+    if (!statusElement) {
+        return;
+    }
+
+    const courseId = {{ course.course_id | int }};
+    const saveUrl = `/student/study/auto/${courseId}`;
+    const saveInterval = 30000;
+
+    let elapsedSeconds = 0;
+    let requestInProgress = false;
+    let wasVisible = document.visibilityState === "visible";
+    let lastTickTime = Date.now();
+
+    setInterval(function () {
+        const now = Date.now();
+
+        if (wasVisible) {
+            elapsedSeconds += Math.max(
+                0,
+                Math.floor((now - lastTickTime) / 1000)
+            );
+        }
+
+        lastTickTime = now;
+    }, 1000);
+
+    async function saveStudyTime(useKeepalive = false) {
+        if (requestInProgress || elapsedSeconds <= 0) {
+            return;
+        }
+
+        const secondsToSave = Math.min(elapsedSeconds, 120);
+
+        requestInProgress = true;
+
+        try {
+            const response = await fetch(saveUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    duration_seconds: secondsToSave
+                }),
+                keepalive: useKeepalive
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to save study time.");
+            }
+
+            elapsedSeconds -= secondsToSave;
+
+            statusElement.textContent =
+                "Study time is being tracked automatically.";
+
+        } catch (error) {
+            statusElement.textContent =
+                "Study-time saving failed temporarily. Retrying...";
+        } finally {
+            requestInProgress = false;
+        }
+    }
+
+    document.addEventListener("visibilitychange", function () {
+        const now = Date.now();
+
+        if (wasVisible) {
+            elapsedSeconds += Math.max(
+                0,
+                Math.floor((now - lastTickTime) / 1000)
+            );
+        }
+
+        lastTickTime = now;
+        wasVisible = document.visibilityState === "visible";
+
+        if (!wasVisible) {
+            saveStudyTime(true);
+        }
+    });
+
+    window.addEventListener("pagehide", function () {
+        const now = Date.now();
+
+        if (wasVisible) {
+            elapsedSeconds += Math.max(
+                0,
+                Math.floor((now - lastTickTime) / 1000)
+            );
+        }
+
+        lastTickTime = now;
+        wasVisible = false;
+
+        saveStudyTime(true);
+    });
+
+    setInterval(function () {
+        if (wasVisible) {
+            saveStudyTime();
+        }
+    }, saveInterval);
+
+    statusElement.textContent =
+        "Automatic study-time tracking is active.";
+
+})();
+</script>
+
+{% endif %}
+
+{% endblock %}

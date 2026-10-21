@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <h1>Manage Courses</h1>
+        <p>View and manage all courses available on CourseHive.</p>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>Course List</h2>
+
+        {% if courses %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Mentor</th>
+                        <th>Difficulty</th>
+                        <th>Duration (Hours)</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ course.course_name }}</td>
+                        <td>{{ course.description or 'No description' }}</td>
+                        <td>{{ course.category or 'Not specified' }}</td>
+                        <td>{{ course.instructor_name or 'Not assigned' }}</td>
+                        <td>{{ course.difficulty or 'Not specified' }}</td>
+                        <td>{{ course.duration_hours or 0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>No courses are available yet.</p>
+        {% endif %}
+
+        <div class="admin-back-dashboard">
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-back-button">
+                ← Back to Admin Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

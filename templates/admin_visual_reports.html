@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <h1>CourseHive Visual Analytics Reports</h1>
+
+    <p>
+        View graphical reports of course enrollments, ratings,
+        completion rates, and recorded study time.
+    </p>
+
+    <div class="dashboard-section">
+        <h2>Student Enrollments by Course</h2>
+        <p>Compare the number of students enrolled in each course.</p>
+
+        <img
+            src="data:image/png;base64,{{ enrollment_chart }}"
+            alt="Bar chart showing student enrollments by course"
+            style="width: 100%; max-width: 900px; height: auto;"
+        >
+    </div>
+
+    <div class="dashboard-section">
+        <h2>Average Course Ratings</h2>
+        <p>
+            Compare the average ratings given to different courses.
+            Ratings are measured out of 5.
+        </p>
+
+        <img
+            src="data:image/png;base64,{{ rating_chart }}"
+            alt="Bar chart showing average course ratings"
+            style="width: 100%; max-width: 900px; height: auto;"
+        >
+    </div>
+
+    <div class="dashboard-section">
+        <h2>Course Completion Rates</h2>
+        <p>
+            Compare the percentage of enrolled students who have
+            completed each course.
+        </p>
+
+        <img
+            src="data:image/png;base64,{{ completion_chart }}"
+            alt="Bar chart showing course completion rates"
+            style="width: 100%; max-width: 900px; height: auto;"
+        >
+    </div>
+
+    <div class="dashboard-section">
+        <h2>Recorded Study Time by Course</h2>
+        <p>
+            Compare the recorded study time for different courses,
+            measured in hours.
+        </p>
+
+        <img
+            src="data:image/png;base64,{{ study_chart }}"
+            alt="Bar chart showing recorded study time by course"
+            style="width: 100%; max-width: 900px; height: auto;"
+        >
+
+        <p>
+            <strong>Note:</strong> Recorded study time represents
+            tracked page activity. It does not necessarily represent
+            actual focused study time.
+        </p>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>Other Analytics Reports</h2>
+
+        <p>
+            <a href="{{ url_for('admin_dashboard') }}"
+               class="course-button">
+                Admin Dashboard
+            </a>
+        </p>
+
+        <p>
+            <a href="{{ url_for('admin_course_analytics') }}"
+               class="course-button">
+                Course Analytics
+            </a>
+        </p>
+
+        <p>
+            <a href="{{ url_for('admin_student_analytics') }}"
+               class="course-button">
+                Student Performance Analytics
+            </a>
+        </p>
+
+        <p>
+            <a href="{{ url_for('admin_completion_analytics') }}"
+               class="course-button">
+                Course Completion Analytics
+            </a>
+        </p>
+
+        <p>
+            <a href="{{ url_for('admin_study_time_analytics') }}"
+               class="course-button">
+                Study-Time Analytics
+            </a>
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

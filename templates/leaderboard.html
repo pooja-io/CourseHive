@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>Quiz Leaderboard</h1>
+            <p>Track student performance across CourseHive quizzes.</p>
+        </div>
+    </div>
+
+    <!-- Course Filter -->
+    <div class="course-card" style="margin-bottom: 20px;">
+
+        <h3>Select Leaderboard</h3>
+
+        <form method="GET" action="{{ url_for('leaderboard') }}">
+
+            <label for="course_id">
+                Choose a course:
+            </label>
+
+            <select
+                name="course_id"
+                id="course_id"
+                style="padding: 10px; margin: 10px 0; max-width: 100%;"
+            >
+
+                <option value="">
+                    Global Leaderboard
+                </option>
+
+                {% for course in courses %}
+
+                <option
+                    value="{{ course.course_id }}"
+                    {% if selected_course_id == course.course_id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ course.course_name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <br>
+
+            <button type="submit" class="enroll-button">
+                View Leaderboard
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- Leaderboard Table -->
+    <div class="course-card">
+
+        <h2>
+            {% if selected_course_id %}
+                Course-wise Rankings
+            {% else %}
+                Global Rankings
+            {% endif %}
+        </h2>
+
+        {% if leaderboard_data %}
+
+        <div style="overflow-x: auto;">
+
+            <table style="width: 100%; border-collapse: collapse;">
+
+                <thead>
+                    <tr>
+                        <th style="padding: 12px; text-align: left;">
+                            Rank
+                        </th>
+
+                        <th style="padding: 12px; text-align: left;">
+                            Student
+                        </th>
+
+                        <th style="padding: 12px; text-align: center;">
+                            Quizzes Completed
+                        </th>
+
+                        <th style="padding: 12px; text-align: center;">
+                            Average Score
+                        </th>
+
+                        <th style="padding: 12px; text-align: center;">
+                            Total Score
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for student in leaderboard_data %}
+
+                    <tr>
+
+                        <td style="padding: 12px;">
+                            {% if loop.index == 1 %}
+                                🥇 1
+                            {% elif loop.index == 2 %}
+                                🥈 2
+                            {% elif loop.index == 3 %}
+                                🥉 3
+                            {% else %}
+                                {{ loop.index }}
+                            {% endif %}
+                        </td>
+
+                        <td style="padding: 12px;">
+                            {{ student.student_name }}
+                        </td>
+
+                        <td style="padding: 12px; text-align: center;">
+                            {{ student.quizzes_completed }}
+                        </td>
+
+                        <td style="padding: 12px; text-align: center;">
+                            {{ student.average_score }}/10
+                        </td>
+
+                        <td style="padding: 12px; text-align: center;">
+                            {{ student.total_score }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <p>No submitted quiz results are available for this leaderboard yet.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

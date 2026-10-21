@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>{{ quiz.title }}</h1>
+            <p><strong>Course:</strong> {{ quiz.course_name }}</p>
+            <p>{{ quiz.description or "Choose the correct answer for each question." }}</p>
+        </div>
+    </div>
+
+    <!-- Quiz Instructions -->
+    <div class="course-card" style="margin-bottom: 20px;">
+        <h3>Quiz Instructions</h3>
+        <p>Time limit: {{ quiz.time_limit_minutes }} minutes</p>
+        <p>Total questions: {{ questions|length }}</p>
+        <p>Total marks: 10</p>
+        <p>Choose one answer for every question. Your score will be calculated automatically.</p>
+    </div>
+
+    <!-- Countdown Timer -->
+    <div class="course-card" style="margin-bottom: 20px;">
+        <h2>
+            Time Remaining:
+            <span id="quiz-timer">--:--</span>
+        </h2>
+    </div>
+
+    {% if questions %}
+
+    <!-- Quiz Form -->
+    <form id="quiz-form"
+          method="POST"
+          action="{{ url_for('submit_quiz', quiz_id=quiz.quiz_id) }}">
+
+        <!-- Identify this specific quiz attempt -->
+        <input type="hidden"
+               name="attempt_id"
+               value="{{ attempt_id }}">
+
+        {% for question in questions %}
+
+        <div class="course-card" style="margin-bottom: 20px;">
+
+            <h3>Question {{ loop.index }}</h3>
+
+            <p>{{ question.question_text }}</p>
+
+            <p>
+                <strong>Marks:</strong> {{ question.marks }}
+            </p>
+
+            <label>
+                <input type="radio"
+                       name="question_{{ question.question_id }}"
+                       value="A"
+                       required>
+                A. {{ question.option_a }}
+            </label>
+
+            <br>
+
+            <label>
+                <input type="radio"
+                       name="question_{{ question.question_id }}"
+                       value="B">
+                B. {{ question.option_b }}
+            </label>
+
+            <br>
+
+            <label>
+                <input type="radio"
+                       name="question_{{ question.question_id }}"
+                       value="C">
+                C. {{ question.option_c }}
+            </label>
+
+            <br>
+
+            <label>
+                <input type="radio"
+                       name="question_{{ question.question_id }}"
+                       value="D">
+                D. {{ question.option_d }}
+            </label>
+
+        </div>
+
+        {% endfor %}
+
+        <button type="submit"
+                class="enroll-button"
+                id="submit-quiz-button">
+            Submit Quiz
+        </button>
+
+    </form>
+
+    {% else %}
+
+        <div class="course-card">
+            <p>This quiz has no questions yet.</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+<!-- Countdown Timer Script -->
+<script>
+(function () {
+    const timerElement = document.getElementById("quiz-timer");
+    const quizForm = document.getElementById("quiz-form");
+
+    if (!timerElement || !quizForm) {
+        return;
+    }
+
+    let remainingSeconds = {{ quiz.time_limit_minutes | int }} * 60;
+    let submitted = false;
+
+    function updateTimer() {
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+
+        timerElement.textContent =
+            String(minutes).padStart(2, "0") + ":" +
+            String(seconds).padStart(2, "0");
+
+        if (remainingSeconds <= 0) {
+            submitted = true;
+
+            // Submit automatically when time expires.
+            // Bypasses browser validation so unanswered questions
+            // do not prevent automatic submission.
+            quizForm.noValidate = true;
+            quizForm.submit();
+
+            return;
+        }
+
+        remainingSeconds--;
+    }
+
+    quizForm.addEventListener("submit", function (event) {
+        if (submitted) {
+            return;
+        }
+
+        if (!confirm("Are you sure you want to submit your quiz?")) {
+            event.preventDefault();
+            return;
+        }
+
+        submitted = true;
+    });
+
+    updateTimer();
+
+    const timerInterval = setInterval(function () {
+        if (submitted) {
+            clearInterval(timerInterval);
+            return;
+        }
+
+        updateTimer();
+    }, 1000);
+
+})();
+
+
+</script>
+
+{% endblock %}

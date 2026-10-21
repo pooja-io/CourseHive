@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}My Quiz Results | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>My Quiz Results</h1>
+            <p>Review your quiz scores and previous attempts.</p>
+        </div>
+
+        <!-- Blue Back Button -->
+        <a href="{{ url_for('student_quizzes') }}"
+           class="nav-button">
+            ← Back to My Quizzes
+        </a>
+    </div>
+
+    <!-- Quiz Results -->
+    {% if results %}
+
+        <div class="course-grid">
+
+            {% for result in results %}
+
+                <div class="course-card">
+
+                    <!-- Course Name -->
+                    <span class="course-category">
+                        {{ result.course_name }}
+                    </span>
+
+                    <!-- Quiz Title -->
+                    <h3>{{ result.quiz_title }}</h3>
+
+                    <!-- Result Details -->
+                    <div class="course-details">
+
+                        <p>
+                            <strong>Attempt:</strong>
+                            {{ result.attempt_number }}
+                        </p>
+
+                        <p>
+                            <strong>Score:</strong>
+                            {% if result.submitted_at %}
+                                {{ result.score }} / 10
+                            {% else %}
+                                Not submitted
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            <strong>Started At:</strong>
+                            {{ result.started_at }}
+                        </p>
+
+                        <p>
+                            <strong>Submitted At:</strong>
+                            {% if result.submitted_at %}
+                                {{ result.submitted_at }}
+                            {% else %}
+                                In progress
+                            {% endif %}
+                        </p>
+
+                        {% if result.submitted_at %}
+
+                            {% if result.score >= 5 %}
+                                <p>
+                                    <strong>Result:</strong> Passed
+                                </p>
+                            {% else %}
+                                <p>
+                                    <strong>Result:</strong> Keep Practising
+                                </p>
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- Empty Results -->
+        <div class="empty-message">
+
+            <div class="empty-icon">📊</div>
+
+            <h3>No quiz results yet</h3>
+
+            <p>
+                Your quiz attempts and scores will appear here.
+            </p>
+
+            <!-- Blue Browse Button -->
+            <a href="{{ url_for('student_quizzes') }}"
+               class="nav-button">
+                Browse Quizzes →
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

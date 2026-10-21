@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Mentor Dashboard | CourseHive{% endblock %}
+
+{% block content %}
+
+<style>
+    /* View Students blue button */
+    .mentor-view-students-button {
+        display: inline-block;
+        width: auto;
+        padding: 10px 20px;
+        background-color: #3157d5;
+        color: #ffffff !important;
+        border: 1px solid #3157d5;
+        border-radius: 7px;
+        text-decoration: none !important;
+        text-align: center;
+        font-weight: 600;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: background-color 0.2s ease;
+    }
+
+    .mentor-view-students-button:hover {
+        background-color: #2445b3;
+        border-color: #2445b3;
+        color: #ffffff !important;
+    }
+</style>
+
+<div class="dashboard-container">
+
+    <!-- Welcome Section -->
+    <div class="mentor-welcome-header">
+        <div>
+            <h1>Hi, {{ mentor_name }}!</h1>
+            <p>Welcome to CourseHive. Keep inspiring students and sharing your knowledge!</p>
+        </div>
+    </div>
+
+    <!-- Mentor Details -->
+    <section class="dashboard-section">
+
+        <h2>Mentor Details</h2>
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Detail</th>
+                        <th>Information</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td>{{ mentor_name }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Expertise</td>
+                        <td>{{ expertise or "Not specified" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <!-- Quick Action Buttons -->
+    <section class="dashboard-section">
+
+        <div class="mentor-quick-actions">
+
+            <a href="{{ url_for('mentor_browse_courses') }}"
+               class="auth-button">
+                Browse Courses to Teach
+            </a>
+
+            <a href="{{ url_for('mentor_assignments') }}"
+               class="auth-button">
+                Manage Assignments
+            </a>
+
+            <a href="{{ url_for('mentor_submissions') }}"
+               class="auth-button">
+                Evaluate Submissions
+            </a>
+
+            <a href="{{ url_for('mentor_quizzes') }}"
+               class="auth-button">
+                Manage Quizzes
+            </a>
+
+            <a href="{{ url_for('leaderboard') }}"
+               class="auth-button">
+                🏆 Quiz Leaderboard
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- Teaching Overview -->
+    <section class="dashboard-section">
+
+        <h2>My Teaching Overview</h2>
+
+        <div class="dashboard-stats">
+
+            <div class="stat-card">
+                <h3>{{ total_courses }}</h3>
+                <p>Assigned Courses</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ total_students }}</h3>
+                <p>Enrolled Students</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ average_progress }}%</h3>
+                <p>Average Student Progress</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Assigned Courses -->
+    <section class="dashboard-section">
+
+        <h2>My Assigned Courses</h2>
+
+        {% if courses %}
+
+            <div class="course-grid">
+
+                {% for course in courses %}
+
+                    <div class="course-card">
+
+                        <h3>{{ course.course_name }}</h3>
+
+                        <p>
+                            {{ course.description or "No course description available." }}
+                        </p>
+
+                        <p>
+                            <strong>Category:</strong>
+                            {{ course.category or "General" }}
+                        </p>
+
+                        <p>
+                            <strong>Difficulty:</strong>
+                            {{ course.difficulty or "Not specified" }}
+                        </p>
+
+                        <p>
+                            <strong>Duration:</strong>
+                            {{ course.duration_hours or 0 }} hours
+                        </p>
+
+                        <p>
+                            <strong>Enrolled Students:</strong>
+                            {{ course.student_count }}
+                        </p>
+
+                        <p>
+                            <strong>Average Progress:</strong>
+                            {{ course.average_progress }}%
+                        </p>
+
+                        <a href="{{ url_for('mentor_course_students', course_id=course.course_id) }}"
+                           class="mentor-view-students-button">
+                            View Students
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+
+                <h3>No Assigned Courses Yet</h3>
+
+                <p>
+                    Browse available courses and find courses
+                    that match your expertise.
+                </p>
+
+                <a href="{{ url_for('mentor_browse_courses') }}"
+                   class="auth-button"
+                   style="background-color: #3157d5; color: #ffffff; border: 1px solid #3157d5; display: inline-block; width: auto; padding: 10px 18px; border-radius: 6px; text-decoration: none; text-align: center;">
+                    Browse Courses
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Courses | CourseHive{% endblock %}
+
+{% block content %}
+<div class="container mentor-browse-container">
+
+    <h1>Browse Courses</h1>
+    <p>Explore courses and request permission to teach them.</p>
+
+    <hr>
+
+    {% if courses %}
+        <div class="course-grid mentor-browse-grid">
+
+            {% for course in courses %}
+                <div class="course-card mentor-browse-card">
+
+                    <h2>{{ course.course_name }}</h2>
+
+                    <p>{{ course.description or "No description available." }}</p>
+
+                    <p>
+                        <strong>Category:</strong>
+                        {{ course.category or "Not specified" }}
+                    </p>
+
+                    <p>
+                        <strong>Difficulty:</strong>
+                        {{ course.difficulty or "Not specified" }}
+                    </p>
+
+                    <p>
+                        <strong>Request status:</strong>
+
+                        {% if course.request_status == "Pending" %}
+                            <span>⏳ Pending</span>
+                        {% elif course.request_status == "Approved" %}
+                            <span>✅ Approved</span>
+                        {% elif course.request_status == "Rejected" %}
+                            <span>❌ Rejected</span>
+                        {% else %}
+                            <span>Not requested</span>
+                        {% endif %}
+                    </p>
+
+                    {% if not course.request_status or course.request_status == "Rejected" %}
+                        <form method="POST"
+                              action="{{ url_for('mentor_request_course', course_id=course.course_id) }}">
+
+                            <button type="submit" class="auth-button">
+                                {% if course.request_status == "Rejected" %}
+                                    Request Again
+                                {% else %}
+                                    Request to Teach
+                                {% endif %}
+                            </button>
+
+                        </form>
+
+                    {% elif course.request_status == "Pending" %}
+                        <button type="button" disabled>
+                            Request Pending
+                        </button>
+
+                    {% else %}
+                        <button type="button" disabled>
+                            Course Approved
+                        </button>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+        <p>No courses are available right now.</p>
+    {% endif %}
+
+    <!-- Back to Dashboard at the bottom -->
+    <div class="mentor-back-dashboard">
+        <a href="{{ url_for('mentor_dashboard') }}" class="mentor-back-button">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>My Assignments</h1>
+            <p>View your assignments and submit your answers.</p>
+        </div>
+    </div>
+
+    {% if assignments %}
+
+        <div class="course-grid">
+
+            {% for assignment in assignments %}
+
+                <div class="course-card">
+
+                    <span class="course-category">
+                        {{ assignment.course_name }}
+                    </span>
+
+                    <h3>{{ assignment.title }}</h3>
+
+                    <p class="course-description">
+                        {{ assignment.description }}
+                    </p>
+
+                    <div class="course-details">
+
+                        <p>
+                            <strong>Maximum Marks:</strong>
+                            {{ assignment.max_marks }}
+                        </p>
+
+                        <p>
+                            <strong>Deadline:</strong>
+                            {% if assignment.due_date %}
+                                {{ assignment.due_date }}
+                            {% else %}
+                                No deadline
+                            {% endif %}
+                        </p>
+
+                        {% if assignment.submission_id %}
+
+                            <p><strong>Status:</strong> Submitted</p>
+
+                            {% if assignment.marks_obtained is not none %}
+                                <p>
+                                    <strong>Your Marks:</strong>
+                                    {{ assignment.marks_obtained }}
+                                    / {{ assignment.max_marks }}
+                                </p>
+
+                                <p>
+                                    <strong>Feedback:</strong>
+                                    {{ assignment.feedback or "No feedback provided." }}
+                                </p>
+                            {% else %}
+                                <p>Your submission is awaiting evaluation.</p>
+                            {% endif %}
+
+                        {% else %}
+
+                            <p><strong>Status:</strong> Not submitted</p>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% if not assignment.submission_id %}
+
+                        <form method="POST"
+                              action="{{ url_for('submit_assignment', assignment_id=assignment.assignment_id) }}">
+
+                            <label for="answer_{{ assignment.assignment_id }}">
+                                Your Answer
+                            </label>
+
+                            <textarea
+                                id="answer_{{ assignment.assignment_id }}"
+                                name="answer_text"
+                                rows="5"
+                                placeholder="Write your answer here..."
+                                required></textarea>
+
+                            <button type="submit" class="enroll-button">
+                                Submit Assignment
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-message">
+            <div class="empty-icon">📝</div>
+            <h3>No assignments available</h3>
+            <p>
+                Assignments for your enrolled courses will appear here
+                when your mentors publish them.
+            </p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

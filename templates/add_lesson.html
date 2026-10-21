@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Add Lesson - CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <h1>Add a Lesson</h1>
+
+    <p>Add a lesson and its YouTube video to your course.</p>
+
+    <form method="POST">
+
+        <div class="form-group">
+            <label for="course_id">Select Course</label>
+
+            <select id="course_id" name="course_id" required>
+                <option value="">-- Select a Course --</option>
+
+                {% for course in courses %}
+                    <option value="{{ course.course_id }}">
+                        {{ course.course_name }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="title">Lesson Title</label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="e.g. Introduction to Python"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Lesson Description</label>
+
+            <textarea
+                id="description"
+                name="description"
+                rows="4"
+                placeholder="Describe what students will learn"
+                required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="youtube_url">YouTube Video URL</label>
+
+            <input
+                type="url"
+                id="youtube_url"
+                name="youtube_url"
+                placeholder="https://www.youtube.com/watch?v=..."
+                required>
+
+            <small>Paste the link of the YouTube video for this lesson.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="lesson_order">Lesson Number</label>
+
+            <input
+                type="number"
+                id="lesson_order"
+                name="lesson_order"
+                min="1"
+                value="1"
+                required>
+        </div>
+
+        <button type="submit" class="auth-button">
+            Add Lesson
+        </button>
+
+    </form>
+
+    <p class="auth-switch">
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </p>
+
+</div>
+
+{% endblock %}

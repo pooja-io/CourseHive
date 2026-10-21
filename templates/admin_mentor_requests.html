@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Mentor Approval Requests | CourseHive{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-container">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>Mentor Approval Requests</h1>
+            <p>Review mentor registrations and decide who can teach on CourseHive.</p>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+
+        {% if pending_mentors %}
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Expertise</th>
+                            <th>Bio</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for mentor in pending_mentors %}
+                            <tr>
+                                <td>{{ mentor.name }}</td>
+                                <td>{{ mentor.email }}</td>
+                                <td>{{ mentor.expertise or "Not provided" }}</td>
+                                <td>{{ mentor.bio or "No bio provided" }}</td>
+
+                                <td>
+                                    <div class="approval-actions">
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'update_mentor_approval',
+                                                mentor_id=mentor.instructor_id,
+                                                action='approve'
+                                            ) }}"
+                                        >
+                                            <button type="submit" class="btn btn-primary approve-button">
+                                                Approve
+                                            </button>
+                                        </form>
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'update_mentor_approval',
+                                                mentor_id=mentor.instructor_id,
+                                                action='reject'
+                                            ) }}"
+                                        >
+                                            <button type="submit" class="btn btn-danger">
+                                                Reject
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <h3>No Pending Requests</h3>
+                <p>There are currently no mentor registrations waiting for approval.</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="admin-back-dashboard">
+        <a href="{{ url_for('admin_dashboard') }}" class="admin-back-button">
+            ← Back to Admin Dashboard
+        </a>
+    </div>
+
+</section>
+
+{% endblock %}

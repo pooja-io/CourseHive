@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auth-container">
+    <h1>Student Registration</h1>
+    <p>Create your CourseHive student account.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('student_register') }}">
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                required
+                maxlength="100"
+                autocomplete="name"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+                maxlength="150"
+                autocomplete="email"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create a password"
+                required
+                minlength="8"
+                autocomplete="new-password"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="confirm_password">Confirm Password</label>
+            <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                placeholder="Enter your password again"
+                required
+                minlength="8"
+                autocomplete="new-password"
+            >
+        </div>
+
+        <button type="submit" class="auth-button">
+            Register
+        </button>
+    </form>
+
+    <p class="auth-switch">
+        Already registered?
+        <a href="{{ url_for('student_login') }}">Login here</a>
+    </p>
+
+    <p class="auth-switch">
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </p>
+</div>
+
+{% endblock %}

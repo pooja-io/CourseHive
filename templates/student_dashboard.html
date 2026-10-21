@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | CourseHive{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Certificate Button */
+    .certificate-button {
+        display: inline-block;
+        background-color: #1e40af;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        text-align: center;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .certificate-button:hover {
+        background-color: #1d4ed8;
+        color: white;
+    }
+
+    .certificate-button:focus {
+        outline: 2px solid #1e40af;
+        outline-offset: 3px;
+    }
+
+    .certificate-message {
+        color: #15803d;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="dashboard-container">
+
+    <!-- Dashboard Welcome Header -->
+    <div class="student-welcome-header">
+        <h1 class="student-welcome-title">
+            Hi, {{ student_name }}!
+        </h1>
+
+        <p class="student-welcome-subtitle">
+            Continue learning and build your skills.
+        </p>
+    </div>
+
+    <!-- Quick Actions -->
+    <section class="dashboard-section">
+        <h2>Quick Actions</h2>
+
+        <div class="course-actions">
+
+            <a href="{{ url_for('student_quizzes') }}"
+               class="course-button">
+                My Quizzes
+            </a>
+
+            <a href="{{ url_for('quiz_results') }}"
+               class="course-button">
+                Quiz Results
+            </a>
+
+            <a href="{{ url_for('student_assignments') }}"
+               class="course-button">
+                My Assignments
+            </a>
+
+            <a href="{{ url_for('leaderboard') }}"
+               class="course-button">
+                🏆 Quiz Leaderboard
+            </a>
+
+            <a href="{{ url_for('student_study_time') }}"
+               class="course-button">
+                📚 My Study Time
+            </a>
+          <a href="{{ url_for('student_notifications') }}"
+   style="background-color: #2563eb;
+          color: white;
+          padding: 10px 18px;
+          border-radius: 6px;
+          text-decoration: none;
+          display: inline-block;
+          font-weight: 600;">
+    🔔 My Notifications
+</a>
+
+        </div>
+    </section>
+
+    <!-- Learning Overview -->
+    <section class="dashboard-section">
+        <h2>My Learning Overview</h2>
+
+        <div class="dashboard-stats">
+
+            <div class="stat-card">
+                <h3>{{ total_enrolled }}</h3>
+                <p>Enrolled Courses</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ completed_courses }}</h3>
+                <p>Completed Courses</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ average_progress }}%</h3>
+                <p>Average Progress</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Enrolled Courses -->
+    <section class="dashboard-section">
+        <h2>My Enrolled Courses</h2>
+
+        {% if enrollments %}
+
+            <div class="course-grid">
+
+                {% for enrollment in enrollments %}
+
+                    <article class="course-card">
+
+                        <span class="course-category">
+                            {{ enrollment.category or "General" }}
+                        </span>
+
+                        <h3>{{ enrollment.course_name }}</h3>
+
+                        <p class="course-description">
+                            {{ enrollment.description or "Continue learning and develop your skills." }}
+                        </p>
+
+                        <div class="course-details">
+
+                            <p>
+                                <strong>Instructor:</strong>
+                                {{ enrollment.instructor_name or "Not assigned" }}
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+                                {{ enrollment.status }}
+                            </p>
+
+                            <p>
+                                <strong>Progress:</strong>
+                                {{ enrollment.progress }}%
+                            </p>
+
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div
+                            class="progress-bar"
+                            role="progressbar"
+                            aria-valuenow="{{ enrollment.progress }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            aria-label="Course progress">
+
+                            <div
+                                class="progress-fill"
+                                style="width: {{ enrollment.progress }}%;">
+                            </div>
+
+                        </div>
+
+                        <!-- Course Actions -->
+                        <div class="course-actions">
+
+                            <a
+                                href="{{ url_for('course_detail', course_id=enrollment.course_id) }}"
+                                class="course-button">
+
+                                {% if enrollment.status == "Completed" %}
+                                    Review Course →
+                                {% else %}
+                                    Continue Learning →
+                                {% endif %}
+
+                            </a>
+
+                            <!-- Certificate Button: Completed Courses Only -->
+                            {% if enrollment.status == "Completed" and enrollment.progress == 100 %}
+
+                                <a
+                                    href="{{ url_for('student_certificate', course_id=enrollment.course_id) }}"
+                                    class="certificate-button">
+                                    🏆 View Certificate
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% if enrollment.status == "Completed" and enrollment.progress == 100 %}
+                            <p class="certificate-message">
+                                🎉 Congratulations! You have completed this course.
+                            </p>
+                        {% endif %}
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+
+                <div class="empty-icon">📚</div>
+
+                <h3>Start Your Learning Journey</h3>
+
+                <p>
+                    You haven't enrolled in any courses yet.
+                    Explore the available courses below and enroll
+                    in one to get started.
+                </p>
+
+            </div>
+
+        {% endif %}
+    </section>
+
+    <!-- Available Courses -->
+    <section class="dashboard-section">
+        <h2>Explore Available Courses</h2>
+
+        <p>
+            Discover new subjects and enroll in courses
+            that interest you.
+        </p>
+
+        {% if available_courses %}
+
+            <div class="course-grid">
+
+                {% for course in available_courses %}
+
+                    <article class="course-card">
+
+                        <span class="course-category">
+                            {{ course.category or "General" }}
+                        </span>
+
+                        <h3>{{ course.course_name }}</h3>
+
+                        <p class="course-description">
+                            {{ course.description or "Explore this course and learn new skills." }}
+                        </p>
+
+                        <div class="course-details">
+
+                            <p>
+                                <strong>Instructor:</strong>
+                                {{ course.instructor_name or "Not assigned" }}
+                            </p>
+
+                        </div>
+
+                        <div class="course-actions">
+
+                            <a
+                                href="{{ url_for('course_detail', course_id=course.course_id) }}"
+                                class="course-button">
+                                View Course →
+                            </a>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('enroll_course', course_id=course.course_id) }}">
+
+                                <button
+                                    type="submit"
+                                    class="enroll-button">
+                                    Enroll Now
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+
+                <h3>You're All Caught Up!</h3>
+
+                <p>
+                    You're enrolled in all currently available courses.
+                    Keep learning and completing your lessons.
+                </p>
+
+            </div>
+
+        {% endif %}
+    </section>
+
+</div>
+
+{% endblock %}

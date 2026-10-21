@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluate Assignments | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Heading -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Evaluate Assignments</h1>
+            <p>View student submissions, award marks, and provide feedback.</p>
+        </div>
+    </div>
+
+    <!-- Student Submissions -->
+    {% if submissions %}
+
+        <div class="course-grid">
+
+            {% for submission in submissions %}
+
+                <div class="course-card">
+
+                    <span class="course-category">
+                        {{ submission.course_name }}
+                    </span>
+
+                    <h3>{{ submission.assignment_title }}</h3>
+
+                    <p>
+                        <strong>Student:</strong>
+                        {{ submission.student_name }}
+                    </p>
+
+                    <p>
+                        <strong>Maximum Marks:</strong>
+                        {{ submission.max_marks }}
+                    </p>
+
+                    <p>
+                        <strong>Submitted At:</strong>
+                        {{ submission.submitted_at }}
+                    </p>
+
+                    <!-- Student's Answer -->
+                    <div class="course-details">
+                        <h4>Student's Answer</h4>
+
+                        <p style="white-space: pre-wrap;">{{ submission.answer_text }}</p>
+                    </div>
+
+                    <!-- Evaluation Form -->
+                    <form method="POST"
+                          action="{{ url_for('grade_assignment', submission_id=submission.submission_id) }}">
+
+                        <label for="marks_{{ submission.submission_id }}">
+                            Marks Obtained
+                        </label>
+
+                        <input
+                            type="number"
+                            id="marks_{{ submission.submission_id }}"
+                            name="marks_obtained"
+                            min="0"
+                            max="{{ submission.max_marks }}"
+                            step="0.01"
+                            value="{{ submission.marks_obtained if submission.marks_obtained is not none else '' }}"
+                            required>
+
+                        <label for="feedback_{{ submission.submission_id }}">
+                            Feedback
+                        </label>
+
+                        <textarea
+                            id="feedback_{{ submission.submission_id }}"
+                            name="feedback"
+                            rows="3"
+                            placeholder="Enter feedback for the student">{{ submission.feedback or '' }}</textarea>
+
+                        <button type="submit" class="enroll-button">
+                            Save Evaluation
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- Empty State -->
+        <div class="empty-message">
+            <div class="empty-icon">📝</div>
+            <h3>No submissions yet</h3>
+            <p>Student submissions will appear here when they submit assignments.</p>
+        </div>
+
+    {% endif %}
+
+    <!-- Back to Assignments Button at the Bottom -->
+    <div class="mentor-back-dashboard">
+        <a href="{{ url_for('mentor_assignments') }}"
+           class="mentor-back-button">
+            ← Back to Assignments
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

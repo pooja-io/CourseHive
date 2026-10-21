@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .course-request-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-width: 190px;
+    }
+
+    .course-request-actions form {
+        flex: 1 1 0;
+        min-width: 0;
+        margin: 0;
+    }
+
+    .course-request-actions button {
+        display: block;
+        width: 100%;
+        min-width: 85px;
+        min-height: 38px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        text-align: center;
+        font-size: 13px;
+    }
+</style>
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>Course Teaching Requests</h1>
+            <p>Review mentor requests to teach courses on CourseHive.</p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section class="dashboard-section">
+
+        <h2>All Teaching Requests</h2>
+
+        {% if requests %}
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Mentor Name</th>
+                            <th>Mentor Email</th>
+                            <th>Course</th>
+                            <th>Current Assignment</th>
+                            <th>Request Status</th>
+                            <th>Requested At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for request in requests %}
+                            <tr>
+                                <td>{{ request.request_id }}</td>
+                                <td>{{ request.mentor_name }}</td>
+                                <td>{{ request.mentor_email or "Not provided" }}</td>
+                                <td>{{ request.course_name }}</td>
+
+                                <td>
+                                    {% if request.current_instructor_id == request.instructor_id %}
+                                        Already assigned to this mentor
+                                    {% elif request.current_instructor_id %}
+                                        Assigned to another mentor
+                                    {% else %}
+                                        Unassigned
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if request.request_status == "Pending" %}
+                                        <span>⏳ Pending</span>
+                                    {% elif request.request_status == "Approved" %}
+                                        <span>✅ Approved</span>
+                                    {% elif request.request_status == "Rejected" %}
+                                        <span>❌ Rejected</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ request.requested_at }}</td>
+
+                                <td>
+                                    {% if request.request_status == "Pending" %}
+
+                                        <div class="course-request-actions">
+
+                                            <form method="POST"
+                                                  action="{{ url_for('admin_handle_course_request', request_id=request.request_id, action='approve') }}">
+
+                                                <button type="submit" class="auth-button">
+                                                    Approve
+                                                </button>
+                                            </form>
+
+                                            <form method="POST"
+                                                  action="{{ url_for('admin_handle_course_request', request_id=request.request_id, action='reject') }}">
+
+                                                <button type="submit" class="auth-button">
+                                                    Reject
+                                                </button>
+                                            </form>
+
+                                        </div>
+
+                                    {% else %}
+                                        No action available
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+            <p>No course teaching requests have been submitted yet.</p>
+        {% endif %}
+
+    </section>
+
+    <div class="admin-back-dashboard">
+        <a href="{{ url_for('admin_dashboard') }}" class="admin-back-button">
+            ← Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

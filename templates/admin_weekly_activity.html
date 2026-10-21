@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Weekly Learning Activity Report | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>📅 Weekly Learning Activity Report</h1>
+            <p>
+                Track student participation, study sessions, and learning
+                time over the last 12 weeks.
+            </p>
+        </div>
+    </div>
+
+    <!-- Calculate Summary Values -->
+    {% set total_sessions = weekly_activity | sum(attribute='total_sessions') %}
+    {% set total_study_hours = weekly_activity | sum(attribute='total_study_hours') %}
+    {% set active_students = weekly_activity[0].active_students if weekly_activity else 0 %}
+
+    <!-- Weekly Activity Summary Cards -->
+    <section class="dashboard-section">
+
+        <h2>📈 Activity Overview</h2>
+
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        ">
+
+            <!-- Active Students -->
+            <div style="
+                background: white;
+                padding: 22px;
+                border-radius: 12px;
+                border-left: 5px solid #2563eb;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            ">
+                <h3 style="font-size: 16px; color: #64748b;">
+                    👥 Active Students
+                </h3>
+
+                <p style="
+                    font-size: 30px;
+                    font-weight: bold;
+                    margin: 10px 0;
+                    color: #2563eb;
+                ">
+                    {{ active_students }}
+                </p>
+
+                <p style="margin: 0; color: #64748b; font-size: 13px;">
+                    Most recent week with recorded activity
+                </p>
+            </div>
+
+            <!-- Total Study Sessions -->
+            <div style="
+                background: white;
+                padding: 22px;
+                border-radius: 12px;
+                border-left: 5px solid #16a34a;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            ">
+                <h3 style="font-size: 16px; color: #64748b;">
+                    📚 Study Sessions
+                </h3>
+
+                <p style="
+                    font-size: 30px;
+                    font-weight: bold;
+                    margin: 10px 0;
+                    color: #16a34a;
+                ">
+                    {{ total_sessions }}
+                </p>
+
+                <p style="margin: 0; color: #64748b; font-size: 13px;">
+                    Recorded sessions across the displayed weeks
+                </p>
+            </div>
+
+            <!-- Total Study Hours -->
+            <div style="
+                background: white;
+                padding: 22px;
+                border-radius: 12px;
+                border-left: 5px solid #9333ea;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            ">
+                <h3 style="font-size: 16px; color: #64748b;">
+                    ⏱️ Study Hours
+                </h3>
+
+                <p style="
+                    font-size: 30px;
+                    font-weight: bold;
+                    margin: 10px 0;
+                    color: #9333ea;
+                ">
+                    {{ "%.2f"|format(total_study_hours) }}
+                </p>
+
+                <p style="margin: 0; color: #64748b; font-size: 13px;">
+                    Total recorded learning time
+                </p>
+            </div>
+
+        </div>
+
+        <p style="font-size: 13px; color: #64748b;">
+            Note: Active students represents the number of distinct students
+            recorded in the most recent week shown in the report.
+            The totals include only completed study sessions recorded
+            in the reporting period.
+        </p>
+
+    </section>
+
+    <!-- Weekly Study Hours Chart -->
+    <section class="dashboard-section">
+
+        <h2>📊 Weekly Study Hours Trend</h2>
+
+        <div style="
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        ">
+            <canvas id="weeklyActivityChart" height="100"></canvas>
+        </div>
+
+    </section>
+
+    <!-- Weekly Activity Table -->
+    <section class="dashboard-section">
+
+        <h2>📋 Weekly Learning Summary</h2>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Week Start</th>
+                        <th>Active Students</th>
+                        <th>Total Study Sessions</th>
+                        <th>Total Study Hours</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for week in weekly_activity %}
+
+                    <tr>
+                        <td>{{ week.week_start }}</td>
+                        <td>{{ week.active_students }}</td>
+                        <td>{{ week.total_sessions }}</td>
+                        <td>
+                            {{ "%.2f"|format(week.total_study_hours or 0) }}
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No completed study sessions were recorded
+                            during the last 12 weeks.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- Back to Dashboard -->
+    <div class="admin-action-buttons">
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-blue-button">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const weekLabels = [
+        {% for week in weekly_activity %}
+            "{{ week.week_start }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ].reverse();
+
+    const studyHours = [
+        {% for week in weekly_activity %}
+            {{ week.total_study_hours or 0 }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ].reverse();
+
+    new Chart(document.getElementById("weeklyActivityChart"), {
+        type: "line",
+
+        data: {
+            labels: weekLabels,
+
+            datasets: [{
+                label: "Total Study Hours",
+                data: studyHours,
+                borderColor: "#2563eb",
+                backgroundColor: "rgba(37, 99, 235, 0.15)",
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointHoverRadius: 7
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    display: true
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return "Study Hours: " + context.parsed.y;
+                        }
+                    }
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "Study Hours"
+                    }
+                },
+
+                x: {
+                    title: {
+                        display: true,
+                        text: "Week Starting"
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

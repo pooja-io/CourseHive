@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}My Study Time | CourseHive{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2>Total Time Spent Learning</h2>
+
+    <table class="table table-bordered mt-3 mb-4">
+        <thead>
+            <tr>
+                <th>Total Study Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    {{ total_seconds // 3600 }} hours
+                    {{ (total_seconds % 3600) // 60 }} minutes
+                    {{ total_seconds % 60 }} seconds
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Study Time by Course</h2>
+
+    {% if study_summary %}
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Total Study Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for course in study_summary %}
+                    <tr>
+                        <td>{{ course.course_name }}</td>
+                        <td>
+                            {{ course.total_seconds // 3600 }} hours
+                            {{ (course.total_seconds % 3600) // 60 }} minutes
+                            {{ course.total_seconds % 60 }} seconds
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No study time recorded for your courses yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('student_dashboard') }}"
+       class="btn btn-primary mt-3">
+        Back to Dashboard
+    </a>
+
+</div>
+{% endblock %}

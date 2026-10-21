@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Inactive Enrollment Report | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>⏳ Inactive Enrollment Report</h1>
+            <p>
+                This report identifies enrollments with no recorded
+                completed study session in the last 14 days.
+                Missing activity records do not necessarily mean a
+                student has stopped learning.
+            </p>
+        </div>
+    </div>
+
+    <!-- Information Notice -->
+    <section class="dashboard-section">
+
+        <div class="alert alert-info">
+            <strong>About this report:</strong>
+            Enrollments are listed for review if they have no recorded
+            completed study session or their last completed session
+            was more than 14 days ago.
+
+            Missing activity data is not proof that a student has
+            stopped learning.
+        </div>
+
+    </section>
+
+    <!-- Enrollment Activity Review Table -->
+    <section class="dashboard-section">
+
+        <h2>Enrollments Requiring Activity Review</h2>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Course Name</th>
+                        <th>Last Recorded Study Date</th>
+                        <th>Activity Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for enrollment in inactive_enrollments %}
+
+                    <tr>
+                        <!-- Student ID -->
+                        <td>
+                            {{ enrollment.student_id }}
+                        </td>
+
+                        <!-- Student Name -->
+                        <td>
+                            {{ enrollment.student_name }}
+                        </td>
+
+                        <!-- Course Name -->
+                        <td>
+                            {{ enrollment.course_name }}
+                        </td>
+
+                        <!-- Last Recorded Study Date -->
+                        <td>
+                            {% if enrollment.last_study_date %}
+                                {{ enrollment.last_study_date }}
+                            {% else %}
+                                No recorded completed session
+                            {% endif %}
+                        </td>
+
+                        <!-- Activity Status -->
+                        <td>
+                            {% if enrollment.last_study_date %}
+
+                                <span class="badge bg-warning text-dark">
+                                    No recent recorded activity
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Activity data unavailable
+                                </span>
+
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            No enrollments requiring activity review were found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- Inactivity Rule -->
+    <section class="dashboard-section">
+
+        <h3>Inactivity Rule</h3>
+
+        <p>
+            An enrollment is flagged for review when no completed
+            study session has been recorded during the previous
+            14 days.
+        </p>
+
+        <p>
+            Enrollments without any recorded completed study session
+            are also included for review. These records may indicate
+            missing data rather than actual inactivity.
+        </p>
+
+    </section>
+
+    <!-- Back to Dashboard -->
+    <div class="admin-action-buttons">
+
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-blue-button">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Course Analytics | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <section class="dashboard-section">
+        <h1>📊 Course Analytics</h1>
+        <p>
+            Analyze course enrollments, student interest,
+            and course ratings across CourseHive.
+        </p>
+    </section>
+
+    <!-- Overall Statistics -->
+    <section class="dashboard-stats">
+
+        <div class="stat-card">
+            <h3>{{ stats.total_courses }}</h3>
+            <p>Total Courses</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ stats.total_enrollments }}</h3>
+            <p>Total Enrollments</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ stats.average_rating }} / 5</h3>
+            <p>Average Course Rating</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ stats.total_reviews }}</h3>
+            <p>Total Reviews</p>
+        </div>
+
+    </section>
+
+    <!-- Course-wise Analytics -->
+    <section class="dashboard-section">
+
+        <h2>📚 Course-wise Performance</h2>
+
+        {% if course_analytics %}
+
+        <div style="overflow-x: auto;">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Enrollments</th>
+                        <th>Average Rating</th>
+                        <th>Total Reviews</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for course in course_analytics %}
+                    <tr>
+                        <td>{{ course.course_name }}</td>
+
+                        <td>
+                            {{ course.total_enrollments }}
+                        </td>
+
+                        <td>
+                            {% if course.average_rating is not none %}
+                                ⭐ {{ course.average_rating }} / 5
+                            {% else %}
+                                Not rated
+                            {% endif %}
+                        </td>
+
+                        <td>{{ course.total_reviews }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-message">
+            <h3>No Courses Available</h3>
+            <p>Add courses to start analyzing course data.</p>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <div class="course-actions">
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="course-button">
+            ← Back to Admin Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

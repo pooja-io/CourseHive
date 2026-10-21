@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Assignments | CourseHive{% endblock %}
+
+{% block content %}
+
+<section class="courses-section">
+
+    <div class="section-heading">
+        <p class="tagline">MENTOR WORKSPACE</p>
+        <h2>Manage Assignments</h2>
+        <p>Create assignments for students enrolled in your courses.</p>
+    </div>
+
+    <div class="course-card">
+
+        <h3>Create a New Assignment</h3>
+
+        <form method="POST"
+              action="{{ url_for('mentor_assignments') }}">
+
+            <label for="course_id">Select Course</label>
+            <select id="course_id" name="course_id" required>
+                <option value="">Choose a course</option>
+
+                {% for course in courses %}
+                <option value="{{ course.course_id }}">
+                    {{ course.course_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label for="title">Assignment Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                maxlength="200"
+                placeholder="Example: Python Programming Assignment"
+                required
+            >
+
+            <label for="description">Instructions</label>
+            <textarea
+                id="description"
+                name="description"
+                rows="5"
+                placeholder="Explain what students must complete..."
+                required
+            ></textarea>
+
+            <label for="due_date">Deadline</label>
+            <input
+                type="datetime-local"
+                id="due_date"
+                name="due_date"
+            >
+
+            <label for="max_marks">Maximum Marks</label>
+            <input
+                type="number"
+                id="max_marks"
+                name="max_marks"
+                min="1"
+                max="100000"
+                value="100"
+                required
+            >
+
+            <button type="submit" class="enroll-button">
+                Publish Assignment
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="section-heading" style="margin-top: 40px;">
+        <h2>Your Assignments</h2>
+    </div>
+
+    {% if assignments %}
+
+        <div class="course-grid">
+
+            {% for assignment in assignments %}
+
+            <article class="course-card">
+
+                <span class="course-category">
+                    {{ assignment.course_name }}
+                </span>
+
+                <h3>{{ assignment.title }}</h3>
+
+                <p class="course-description">
+                    {{ assignment.description }}
+                </p>
+
+                <div class="course-details">
+
+                    <p>
+                        <strong>Maximum Marks:</strong>
+                        {{ assignment.max_marks }}
+                    </p>
+
+                    <p>
+                        <strong>Deadline:</strong>
+                        {% if assignment.due_date %}
+                            {{ assignment.due_date }}
+                        {% else %}
+                            No deadline
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <strong>Created:</strong>
+                        {{ assignment.created_at }}
+                    </p>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-message">
+            <div class="empty-icon">📝</div>
+            <h3>No assignments yet</h3>
+            <p>Create your first assignment using the form above.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

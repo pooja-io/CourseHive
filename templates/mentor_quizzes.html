@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Quizzes | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Heading -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Manage Quizzes</h1>
+            <p>Create quizzes for your assigned courses.</p>
+        </div>
+    </div>
+
+    <!-- Create Quiz Form -->
+    <section class="dashboard-section">
+
+        <h2>Create a New Quiz</h2>
+
+        {% if courses %}
+
+        <form method="POST"
+              action="{{ url_for('mentor_quizzes') }}">
+
+            <label for="course_id">Select Course</label>
+
+            <select id="course_id"
+                    name="course_id"
+                    required>
+
+                <option value="">Choose a course</option>
+
+                {% for course in courses %}
+                    <option value="{{ course.course_id }}">
+                        {{ course.course_name }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+            <label for="title">Quiz Title</label>
+
+            <input type="text"
+                   id="title"
+                   name="title"
+                   placeholder="Example: Python Basics Quiz"
+                   maxlength="200"
+                   required>
+
+            <label for="description">Description</label>
+
+            <textarea id="description"
+                      name="description"
+                      rows="3"
+                      placeholder="Enter quiz instructions"></textarea>
+
+            <label for="time_limit_minutes">
+                Time Limit (minutes)
+            </label>
+
+            <input type="number"
+                   id="time_limit_minutes"
+                   name="time_limit_minutes"
+                   min="1"
+                   max="180"
+                   value="15"
+                   required>
+
+            <label for="max_attempts">Maximum Attempts</label>
+
+            <input type="number"
+                   id="max_attempts"
+                   name="max_attempts"
+                   min="1"
+                   max="10"
+                   value="1"
+                   required>
+
+            <button type="submit" class="enroll-button">
+                Create Quiz
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <p>
+            You don't have any assigned courses yet.
+            Assign a course to your mentor account before creating a quiz.
+        </p>
+
+        {% endif %}
+
+    </section>
+
+    <!-- Existing Quizzes -->
+    <section class="dashboard-section">
+
+        <h2>My Quizzes</h2>
+
+        {% if quizzes %}
+
+        <div class="course-grid">
+
+            {% for quiz in quizzes %}
+
+            <div class="course-card">
+
+                <span class="course-category">
+                    {{ quiz.course_name }}
+                </span>
+
+                <h3>{{ quiz.title }}</h3>
+
+                <p>
+                    {{ quiz.description or "No description provided." }}
+                </p>
+
+                <div class="course-details">
+
+                    <p>
+                        <strong>Time Limit:</strong>
+                        {{ quiz.time_limit_minutes }} minutes
+                    </p>
+
+                    <p>
+                        <strong>Maximum Attempts:</strong>
+                        {{ quiz.max_attempts }}
+                    </p>
+
+                    <p>
+                        <strong>Questions:</strong>
+                        {{ quiz.question_count }}
+                    </p>
+
+                    <p>
+                        <strong>Total Question Marks:</strong>
+                        {{ quiz.total_marks }}
+                    </p>
+
+                </div>
+
+                <a href="{{ url_for('manage_quiz_questions', quiz_id=quiz.quiz_id) }}"
+                   class="auth-button">
+                    Manage Questions
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-message">
+            <div class="empty-icon">📝</div>
+
+            <h3>No quizzes created yet</h3>
+
+            <p>
+                Create your first quiz using the form above.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <!-- Back to Dashboard at the Bottom -->
+    <div class="mentor-back-dashboard">
+        <a href="{{ url_for('mentor_dashboard') }}"
+           class="mentor-back-button">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

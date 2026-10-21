@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <h1>Manage Mentors</h1>
+        <p>View all registered mentors on CourseHive.</p>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>Mentor List</h2>
+
+        {% if mentors %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mentor ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Expertise</th>
+                        <th>Bio</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for mentor in mentors %}
+                    <tr>
+                        <td>{{ mentor.instructor_id }}</td>
+                        <td>{{ mentor.name }}</td>
+                        <td>{{ mentor.email or 'Not provided' }}</td>
+                        <td>{{ mentor.expertise or 'Not specified' }}</td>
+                        <td>{{ mentor.bio or 'No bio available' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>No mentors have registered yet.</p>
+        {% endif %}
+
+        <div class="admin-back-dashboard">
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-back-button">
+                ← Back to Admin Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

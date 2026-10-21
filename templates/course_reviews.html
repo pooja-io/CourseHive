@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Course Reviews | CourseHive{% endblock %}
+
+{% block content %}
+
+<style>
+/* Course Reviews page buttons */
+.dashboard-container .course-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 42px;
+    padding: 10px 18px;
+    border-radius: 9px;
+    font-family: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    background: #3157d5 !important;
+    color: #ffffff !important;
+    border: 1px solid #3157d5 !important;
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+/* Hover: white background and black text */
+.dashboard-container .course-button:hover {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #3157d5 !important;
+}
+
+/* Keep button text black when hovered */
+.dashboard-container .course-button:hover,
+.dashboard-container .course-button:hover * {
+    color: #000000 !important;
+}
+</style>
+
+<div class="dashboard-container">
+
+    <!-- Course Header -->
+    <section class="dashboard-section">
+        <h1>{{ course.course_name }}</h1>
+        <h2>⭐ Course Reviews & Ratings</h2>
+        <p>Share your experience and help other students choose courses.</p>
+
+        <div class="dashboard-stats">
+
+            <div class="stat-card">
+                <h3>
+                    {{ rating_summary.average_rating
+                       if rating_summary.average_rating is not none
+                       else "N/A" }}
+                    / 5
+                </h3>
+                <p>Average Rating</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ rating_summary.total_reviews }}</h3>
+                <p>Total Reviews</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Review Form -->
+    <section class="dashboard-section">
+        <h2>
+            {% if my_review %}
+                Edit Your Review
+            {% else %}
+                Write a Review
+            {% endif %}
+        </h2>
+
+        <form method="POST"
+              action="{{ url_for('course_reviews', course_id=course.course_id) }}">
+
+            <div class="form-group">
+                <label for="rating">Your Rating</label>
+
+                <select id="rating"
+                        name="rating"
+                        required>
+
+                    <option value="">Select a rating</option>
+
+                    <option value="5"
+                        {% if my_review and my_review.rating == 5 %}selected{% endif %}>
+                        ⭐⭐⭐⭐⭐ - Excellent
+                    </option>
+
+                    <option value="4"
+                        {% if my_review and my_review.rating == 4 %}selected{% endif %}>
+                        ⭐⭐⭐⭐ - Very Good
+                    </option>
+
+                    <option value="3"
+                        {% if my_review and my_review.rating == 3 %}selected{% endif %}>
+                        ⭐⭐⭐ - Good
+                    </option>
+
+                    <option value="2"
+                        {% if my_review and my_review.rating == 2 %}selected{% endif %}>
+                        ⭐⭐ - Fair
+                    </option>
+
+                    <option value="1"
+                        {% if my_review and my_review.rating == 1 %}selected{% endif %}>
+                        ⭐ - Poor
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Your Comments</label>
+
+                <textarea id="comment"
+                          name="comment"
+                          rows="4"
+                          placeholder="What did you think about this course?">{{ my_review.comment if my_review and my_review.comment else "" }}</textarea>
+            </div>
+
+            <button type="submit" class="course-button">
+                {% if my_review %}
+                    Update Review
+                {% else %}
+                    Submit Review
+                {% endif %}
+            </button>
+
+        </form>
+    </section>
+
+    <!-- Student Reviews -->
+    <section class="dashboard-section">
+        <h2>Student Reviews</h2>
+
+        {% if reviews %}
+
+            <div class="course-grid">
+
+                {% for review in reviews %}
+
+                    <article class="course-card">
+
+                        <h3>{{ review.student_name }}</h3>
+
+                        <p>
+                            <strong>Rating:</strong>
+                            {{ "⭐" * review.rating }}
+                            ({{ review.rating }}/5)
+                        </p>
+
+                        <p class="course-description">
+                            {{ review.comment or "No written comment provided." }}
+                        </p>
+
+                        <p>
+                            <small>
+                                {{ review.created_at }}
+                            </small>
+                        </p>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-message">
+                <h3>No Reviews Yet</h3>
+                <p>Be the first student to review this course!</p>
+            </div>
+
+        {% endif %}
+    </section>
+
+    <!-- Navigation -->
+    <div class="course-actions">
+        <a href="{{ url_for('student_dashboard') }}"
+           class="course-button">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

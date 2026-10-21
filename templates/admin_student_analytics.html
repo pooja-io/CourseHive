@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Student Performance Analytics | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <section class="dashboard-section">
+        <h1>🎓 Student Performance Analytics</h1>
+        <p>
+            Analyze quiz performance and assignment submissions
+            for students across CourseHive.
+        </p>
+    </section>
+
+    <!-- Student Performance Table -->
+    <section class="dashboard-section">
+
+        <h2>📊 Student Performance Report</h2>
+
+        {% if student_performance %}
+
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Quiz Attempts</th>
+                        <th>Average Quiz Score</th>
+                        <th>Assignment Submissions</th>
+                        <th>Graded Submissions</th>
+                        <th>Average Assignment Marks</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in student_performance %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+
+                        <td>{{ student.quiz_attempts }}</td>
+
+                        <td>
+                            {% if student.quiz_attempts > 0 %}
+                                {{ student.average_quiz_percentage }}%
+                            {% else %}
+                                No attempts
+                            {% endif %}
+                        </td>
+
+                        <td>{{ student.total_submissions }}</td>
+
+                        <td>{{ student.graded_submissions }}</td>
+
+                        <td>
+                            {% if student.average_assignment_marks is not none %}
+                                {{ student.average_assignment_marks }}
+                            {% else %}
+                                Not graded
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-message">
+            <h3>No Student Data Available</h3>
+            <p>Student performance data will appear here when available.</p>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <div class="course-actions">
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="course-button">
+            ← Back to Admin Dashboard
+        </a>
+
+        <a href="{{ url_for('admin_course_analytics') }}"
+           class="course-button">
+            📚 Course Analytics
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

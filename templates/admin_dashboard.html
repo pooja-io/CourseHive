@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p>Welcome, {{ admin_name }}!</p>
+            <p>Manage your CourseHive platform.</p>
+        </div>
+    </div>
+
+    <!-- Platform Overview -->
+    <section class="dashboard-section">
+        <h2>Platform Overview</h2>
+
+        <div class="dashboard-stats">
+
+            <div class="stat-card">
+                <h3>{{ total_students }}</h3>
+                <p>Total Students</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ total_mentors }}</h3>
+                <p>Total Mentors</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ total_courses }}</h3>
+                <p>Total Courses</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ total_enrollments }}</h3>
+                <p>Total Enrollments</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>{{ average_progress }}%</h3>
+                <p>Average Learning Progress</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Analytics -->
+    <section class="dashboard-section">
+        <h2>📊 CourseHive Analytics</h2>
+
+        <p>
+            Explore course performance, student progress,
+            course completion, study time, and visual reports
+            from one place.
+        </p>
+
+        <div class="admin-action-buttons">
+
+            <a href="{{ url_for('admin_all_analytics') }}"
+               class="admin-blue-button">
+                📊 View All Analytics
+            </a>
+
+            <a href="{{ url_for('admin_weekly_activity') }}"
+               class="admin-blue-button">
+                📅 Weekly Learning Activity Report
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Manage Students -->
+    <section class="dashboard-section">
+        <h2>Manage Students</h2>
+
+        <p>View and manage students registered on CourseHive.</p>
+
+        <div class="admin-action-buttons">
+            <a href="{{ url_for('admin_students') }}"
+               class="admin-blue-button">
+                View All Students
+            </a>
+        </div>
+    </section>
+
+    <!-- Manage Mentors -->
+    <section class="dashboard-section">
+        <h2>Manage Mentors</h2>
+
+        <p>
+            View registered mentors and manage mentor approval requests.
+        </p>
+
+        <div class="admin-action-buttons">
+
+            <a href="{{ url_for('admin_mentors') }}"
+               class="admin-blue-button">
+                View All Mentors
+            </a>
+
+            <a href="{{ url_for('admin_mentor_requests') }}"
+               class="admin-blue-button">
+                Mentor Approval Requests
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Manage Courses -->
+    <section class="dashboard-section">
+        <h2>Manage Courses</h2>
+
+        <p>
+            Add courses and manage the courses available on CourseHive.
+        </p>
+
+        <div class="admin-action-buttons">
+
+            <a href="{{ url_for('admin_courses') }}"
+               class="admin-blue-button">
+                View All Courses
+            </a>
+
+            <a href="{{ url_for('admin_add_course') }}"
+               class="admin-blue-button">
+                Add New Course
+            </a>
+
+            <a href="{{ url_for('admin_course_requests') }}"
+               class="admin-blue-button">
+                Course Teaching Requests
+            </a>
+
+            <a href="{{ url_for('admin_inactive_enrollments') }}"
+   class="admin-blue-button">
+    ⏳ Inactive Enrollment Report
+</a>
+<a href="{{ url_for('admin_course_enrollments') }}"
+   class="admin-blue-button">
+    📚 Course-wise Enrollment Report
+</a>
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

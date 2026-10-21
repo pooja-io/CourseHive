@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Course-wise Enrollment Report | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>📚 Course-wise Enrollment Report</h1>
+            <p>View enrollment and completion details for every course on CourseHive.</p>
+        </div>
+    </div>
+
+    <!-- Matplotlib Enrollment Chart -->
+    {% if chart_image %}
+    <section class="dashboard-section">
+
+        <h2>📊 Student Enrollments by Course</h2>
+
+        <p>
+            Compare the number of students enrolled in each course.
+        </p>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <img
+                src="data:image/png;base64,{{ chart_image }}"
+                alt="Student enrollments by course chart"
+                style="max-width: 100%; height: auto;"
+            >
+        </div>
+
+    </section>
+    {% endif %}
+
+    <!-- Enrollment Report -->
+    <section class="dashboard-section">
+
+        <h2>Course Enrollment and Completion Summary</h2>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Instructor Name</th>
+                        <th>Total Enrolled Students</th>
+                        <th>Completed Students</th>
+                        <th>Completion Rate</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for course in course_enrollments %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+
+                        <td>{{ course.course_name }}</td>
+
+                        <td>
+                            {% if course.instructor_name %}
+                                {{ course.instructor_name }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+                        </td>
+
+                        <td>{{ course.total_students }}</td>
+
+                        <td>{{ course.completed_students }}</td>
+
+                        <td>
+                            <div style="min-width: 120px;">
+
+                                <strong>{{ course.completion_rate }}%</strong>
+
+                                <div style="
+                                    background-color: #e5e7eb;
+                                    border-radius: 10px;
+                                    height: 10px;
+                                    margin-top: 6px;
+                                    overflow: hidden;
+                                ">
+                                    <div style="
+                                        background-color: #2563eb;
+                                        height: 10px;
+                                        width: {{ course.completion_rate }}%;
+                                        border-radius: 10px;
+                                    "></div>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            No courses found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- Calculation Explanation -->
+        <div style="
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        ">
+
+            <h4 style="color: #1d4ed8;">
+                How is the completion rate calculated?
+            </h4>
+
+            <p style="margin-bottom: 0;">
+                Completion Rate =
+                (Completed Enrollments ÷ Total Enrollments) × 100.
+                All enrollments for a course are included in the denominator.
+                Courses with no enrollments display a completion rate of 0%.
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- Back to Dashboard -->
+    <div class="admin-action-buttons">
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="admin-blue-button">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

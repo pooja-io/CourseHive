@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Enrolled Students | CourseHive{% endblock %}
+
+{% block content %}
+
+<style>
+    .mentor-back-dashboard {
+        margin-top: 30px;
+        padding: 18px;
+        background-color: #3157d5;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .mentor-back-button {
+        display: inline-block;
+        padding: 10px 22px;
+        background-color: #ffffff;
+        color: #3157d5 !important;
+        border: 1px solid #ffffff;
+        border-radius: 6px;
+        text-decoration: none !important;
+        font-weight: 600;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+    }
+
+    .mentor-back-button:hover {
+        background-color: #eaf0ff;
+        color: #2445b3 !important;
+    }
+</style>
+
+<div class="dashboard-container">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <h1>Enrolled Students</h1>
+        <p>Course: {{ course.course_name }}</p>
+    </div>
+
+    <!-- Student Details -->
+    <div class="dashboard-section">
+
+        <h2>Student Details</h2>
+
+        {% if students %}
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Enrollment Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.email }}</td>
+                                <td>{{ student.progress }}%</td>
+                                <td>{{ student.status }}</td>
+                                <td>{{ student.enrolled_at }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+
+            <p>No students have enrolled in this course yet.</p>
+
+        {% endif %}
+
+        <!-- Back to Dashboard Blue Box -->
+        <div class="mentor-back-dashboard">
+            <a href="{{ url_for('mentor_dashboard') }}"
+               class="mentor-back-button">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

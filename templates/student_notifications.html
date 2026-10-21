@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}My Notifications | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>My Notifications</h1>
+            <p>Stay updated with your learning activities.</p>
+        </div>
+
+        <a href="{{ url_for('student_dashboard') }}"
+           style="background-color: #2563eb;
+                  color: white;
+                  padding: 10px 18px;
+                  border-radius: 6px;
+                  text-decoration: none;
+                  display: inline-block;">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div style="margin-top: 25px;">
+
+        {% if notifications %}
+
+            {% for notification in notifications %}
+
+                <div style="
+                    background-color: white;
+                    border: 1px solid #e2e8f0;
+                    border-left: 5px solid
+                    {% if notification.is_read %}#94a3b8{% else %}#2563eb{% endif %};
+                    border-radius: 8px;
+                    padding: 18px;
+                    margin-bottom: 15px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                ">
+
+                    <h3 style="margin-top: 0; color: #1e293b;">
+                        {{ notification.title }}
+
+                        {% if not notification.is_read %}
+                            <span style="
+                                background-color: #dbeafe;
+                                color: #1d4ed8;
+                                font-size: 12px;
+                                padding: 4px 8px;
+                                border-radius: 12px;
+                            ">
+                                New
+                            </span>
+                        {% endif %}
+                    </h3>
+
+                    <p style="color: #475569;">
+                        {{ notification.message }}
+                    </p>
+
+                    <small style="color: #64748b;">
+                        {{ notification.created_at }}
+                    </small>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div style="
+                background-color: white;
+                padding: 30px;
+                text-align: center;
+                border-radius: 8px;
+                border: 1px solid #e2e8f0;
+            ">
+                <h3>No notifications yet</h3>
+                <p>You will see your learning updates here.</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

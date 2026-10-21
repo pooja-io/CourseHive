@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Quiz Questions | CourseHive{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Page Heading -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Manage Quiz Questions</h1>
+            <p><strong>Quiz:</strong> {{ quiz.title }}</p>
+            <p><strong>Course:</strong> {{ quiz.course_name }}</p>
+        </div>
+    </div>
+
+    <!-- Add Question Form -->
+    <section class="dashboard-section">
+
+        <h2>Add a Question</h2>
+
+        <form method="POST"
+              action="{{ url_for('manage_quiz_questions', quiz_id=quiz.quiz_id) }}">
+
+            <label for="question_text">Question</label>
+
+            <textarea
+                id="question_text"
+                name="question_text"
+                rows="3"
+                placeholder="Enter your question"
+                required></textarea>
+
+            <label for="option_a">Option A</label>
+
+            <input
+                type="text"
+                id="option_a"
+                name="option_a"
+                maxlength="500"
+                required>
+
+            <label for="option_b">Option B</label>
+
+            <input
+                type="text"
+                id="option_b"
+                name="option_b"
+                maxlength="500"
+                required>
+
+            <label for="option_c">Option C</label>
+
+            <input
+                type="text"
+                id="option_c"
+                name="option_c"
+                maxlength="500"
+                required>
+
+            <label for="option_d">Option D</label>
+
+            <input
+                type="text"
+                id="option_d"
+                name="option_d"
+                maxlength="500"
+                required>
+
+            <label for="correct_option">Correct Answer</label>
+
+            <select
+                id="correct_option"
+                name="correct_option"
+                required>
+
+                <option value="">Select the correct option</option>
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+
+            </select>
+
+            <label for="marks">Marks for This Question</label>
+
+            <input
+                type="number"
+                id="marks"
+                name="marks"
+                min="1"
+                max="10"
+                value="1"
+                required>
+
+            <button type="submit" class="enroll-button">
+                Add Question
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- Existing Questions -->
+    <section class="dashboard-section">
+
+        <h2>Existing Questions</h2>
+
+        {% if questions %}
+
+            {% for question in questions %}
+
+                <div class="course-card">
+
+                    <h3>Question {{ loop.index }}</h3>
+
+                    <p>{{ question.question_text }}</p>
+
+                    <p><strong>A.</strong> {{ question.option_a }}</p>
+                    <p><strong>B.</strong> {{ question.option_b }}</p>
+                    <p><strong>C.</strong> {{ question.option_c }}</p>
+                    <p><strong>D.</strong> {{ question.option_d }}</p>
+
+                    <p>
+                        <strong>Correct Answer:</strong>
+                        {{ question.correct_option }}
+                    </p>
+
+                    <p>
+                        <strong>Marks:</strong>
+                        {{ question.marks }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-message">
+                <h3>No Questions Added Yet</h3>
+                <p>Add your first question using the form above.</p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    <!-- Back to Quizzes Button at the Bottom -->
+    <div class="quiz-back-container">
+        <a href="{{ url_for('mentor_quizzes') }}"
+           class="quiz-back-button">
+            &#8592; Back to Quizzes
+        </a>
+    </div>
+
+</div>
+
+<style>
+    .quiz-back-container {
+        margin-top: 30px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .quiz-back-button {
+        display: inline-block;
+        background-color: #2563eb;
+        color: #ffffff !important;
+        padding: 12px 24px;
+        border: 1px solid #2563eb;
+        border-radius: 8px;
+        text-decoration: none !important;
+        font-weight: 600;
+        text-align: center;
+        transition: background-color 0.2s ease;
+    }
+
+    .quiz-back-button:hover {
+        background-color: #1d4ed8;
+        border-color: #1d4ed8;
+        color: #ffffff !important;
+    }
+</style>
+
+{% endblock %}

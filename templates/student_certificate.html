@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Course Completion Certificate | CourseHive{% endblock %}
+
+{% block content %}
+
+<style>
+    .certificate-page {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .certificate {
+        background: #ffffff;
+        border: 10px solid #1e40af;
+        outline: 3px solid #d4af37;
+        outline-offset: -20px;
+        padding: 60px 35px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .certificate-brand {
+        color: #1e40af;
+        font-size: 18px;
+        font-weight: bold;
+        letter-spacing: 4px;
+    }
+
+    .certificate h1 {
+        color: #1e40af;
+        font-size: 38px;
+        margin: 25px 0;
+    }
+
+    .certificate-subtitle {
+        font-size: 18px;
+        color: #555;
+    }
+
+    .student-name {
+        font-size: 32px;
+        color: #222;
+        font-weight: bold;
+        margin: 25px 0;
+        border-bottom: 2px solid #d4af37;
+        display: inline-block;
+        padding: 0 25px 10px;
+    }
+
+    .course-name {
+        color: #1e40af;
+        font-size: 25px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    .certificate-footer {
+        margin-top: 40px;
+        color: #555;
+    }
+
+    .certificate-buttons {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .certificate-button {
+        display: inline-block;
+        padding: 12px 22px;
+        border-radius: 6px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .print-button {
+        background: #1e40af;
+        color: white;
+    }
+
+    .dashboard-button {
+        background: #e5e7eb;
+        color: #222;
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .certificate, .certificate * {
+            visibility: visible;
+        }
+
+        .certificate {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: none;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .certificate-buttons {
+            display: none;
+        }
+    }
+</style>
+
+<div class="certificate-page">
+
+    <div class="certificate">
+
+        <div class="certificate-brand">
+            COURSEHIVE
+        </div>
+
+        <h1>Certificate of Completion</h1>
+
+        <p class="certificate-subtitle">
+            This certificate is proudly presented to
+        </p>
+
+        <div class="student-name">
+            {{ certificate.student_name }}
+        </div>
+
+        <p>
+            for successfully completing the course
+        </p>
+
+        <div class="course-name">
+            {{ certificate.course_name }}
+        </div>
+
+        <div class="certificate-footer">
+            <p>Congratulations on your achievement!</p>
+            <p><strong>CourseHive Learning Platform</strong></p>
+        </div>
+
+    </div>
+
+    <div class="certificate-buttons">
+
+        <button
+            class="certificate-button print-button"
+            onclick="window.print()">
+            Download / Print Certificate
+        </button>
+
+        <a
+            href="{{ url_for('student_dashboard') }}"
+            class="certificate-button dashboard-button">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
