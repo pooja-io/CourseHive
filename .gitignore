@@ -12,4 +12,8 @@ venv/
 .venv/
 
 # IDE settings
-.vscode/
+.vscode/coursehive_backup.sql
+
+# Local database backup - keep private
+coursehive_backup.sql
+*.sql
